@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    select: false // Don't return password in queries by default
+    select: false, // Don't return password in queries by default
   },
 
   // Optional fields - filled during profile completion
@@ -34,18 +34,18 @@ const userSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
-    min: [1, 'Age must be at least 1'],
-    max: [150, 'Age must be less than 150'],
+    min:[1, "Age must be atleast 1"],
+    max:[150, "Age must be less than 150"],
     default: null
   },
   height: {
-    type: Number, // Store in cm for consistency
+    type: Number, 
     min: [50, 'Height must be at least 50cm'],
     max: [300, 'Height must be less than 300cm'],
     default: null
   },
   weight: {
-    type: Number, // Store in kg for consistency
+    type: Number, 
     min: [1, 'Weight must be at least 1kg'],
     max: [500, 'Weight must be less than 500kg'],
     default: null
@@ -114,11 +114,6 @@ const userSchema = new mongoose.Schema({
     select: false
   },
 
-  // Timestamps
-  lastLogin: {
-    type: Date,
-    default: null
-  }
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
   toJSON: { 
@@ -137,8 +132,6 @@ const userSchema = new mongoose.Schema({
 
 // Indexes for performance
 userSchema.index({ email: 1 });
-userSchema.index({ phone: 1 }, { sparse: true });
-userSchema.index({ createdAt: -1 });
 userSchema.index({ role: 1, isActive: 1 });
 
 // Pre-save middleware to validate and hash password
@@ -199,16 +192,5 @@ userSchema.statics.findByResetToken = function(hashedToken) {
   });
 };
 
-// Virtual for BMI calculation
-userSchema.virtual('bmi').get(function() {
-  if (this.weight && this.height) {
-    const heightInMeters = this.height / 100;
-    return (this.weight / (heightInMeters * heightInMeters)).toFixed(2);
-  }
-  return null;
-});
-
 const User = mongoose.model('User', userSchema);
-
-// ES6 module export (NOT CommonJS)
 export default User;
