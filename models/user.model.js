@@ -25,13 +25,14 @@ const userSchema = new mongoose.Schema({
     select: false, // Don't return password in queries by default
   },
 
-  // Optional fields - filled during profile completion
   phone: {
     type: String,
+    required: [true, 'Phone number is required'],
     trim: true,
     match: [/^\+?[0-9]{10,15}$/, 'Please provide a valid phone number'],
     default: null
   },
+  // Optional fields - filled during profile completion
   age: {
     type: Number,
     min:[1, "Age must be atleast 1"],
