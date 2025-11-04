@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5500:5500"
+    environment:
+      - MONGODB_URI=mongodb+srv://rickbhattacharya8_db_user:Rick0123456@cluster4.yrdr94r.mongodb.net/
+      - PORT=5500
+      - JWT_SECRET=your_jwt_secret_key
+      - JWT_EXPIRES_IN=7d
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USER=sbsocial7@gmail.com
+      - SMTP_PASS=thuzgzizolnoormq
+      - SMTP_FROM=sbsocial7@gmail.com
+      - SMTP_FROM_NAME=EdocHub
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run dev

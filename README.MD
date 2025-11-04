@@ -1,10 +1,52 @@
 # EdocHub — Auth API Documentation
 
+## Quick Start for Frontend Developers
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your machine ([Get Docker](https://docs.docker.com/get-docker/))
+
+### Running the API Server
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Rick01bhatta/edochub.git
+   cd edochub
+   ```
+
+2. Start the API server:
+   ```bash
+   docker-compose up
+   ```
+   The server will start in development mode with hot-reload enabled.
+
+3. (Optional) If you make changes to the code or pull updates:
+   ```bash
+   docker-compose up --build
+   ```
+
+4. To stop the server:
+   ```bash
+   docker-compose down
+   ```
+
+### API Base URL
+All API endpoints are available at: `http://localhost:5500/api/auth`
+
+### Health Check
+To verify the API is running:
+- Endpoint: `http://localhost:5500/api/auth`
+- Method: GET
+- Expected Response: 200 OK
+
+### Available Endpoints
+Frontend developers can integrate with these endpoints:
+
+## API Documentation
+
 This document describes the authentication-related HTTP endpoints available in the EdocHub backend. It includes request method/URL, headers, sample bodies, sample responses, errors, and notes for frontend developers to integrate the API.
 
-Base URL (development):
-
-- http://localhost:5500/api/auth
+Base URL (development): `http://localhost:5500/api/auth`
 
 Content-Type used for all endpoints below: `application/json`
 
@@ -306,18 +348,57 @@ If the server returns an error it will generally be in this form (status code va
 
 ---
 
-## Quick test checklist (frontend developer)
-1. Start backend server: `npm run dev` (confirm console shows server running and DB connected)
-2. Register a new user using `/register` and confirm you get a token
-3. Login with the same credentials using `/login`
-4. Request password reset using `/forgot-password` and get the OTP (via email or server logs)
-5. Verify OTP with `/verify-otp` to get a reset token
-6. Reset password using `/reset-password` and then login with the new password
+## Testing Guide for Frontend Developers
 
----
+### Quick Test Flow
 
-If you want I can also add a tiny JS test script in `scripts/` that runs the full flow (register → login → forgot → verify → reset → login) to help automate frontend integration testing. Open an issue or request and I will add it.
+1. Start the API server using Docker:
+   ```bash
+   docker-compose up
+   ```
 
----
+2. Test the authentication flow in this order:
 
-Happy integrating — if anything in the real responses does not match this doc, paste the actual server response and I'll update the README accordingly.
+   a. Register a new user:
+   - Endpoint: `/register`
+   - Method: POST
+   - You should receive a token in response
+
+   b. Login with the registered user:
+   - Endpoint: `/login`
+   - Method: POST
+   - Use the same credentials from registration
+
+   c. Test password reset flow:
+   - Request OTP: `/forgot-password` (POST)
+   - Verify OTP: `/verify-otp` (POST)
+   - Reset Password: `/reset-password` (POST)
+   - Login again with new password: `/login` (POST)
+
+### Integration Testing Tips
+
+1. All endpoints return JSON responses
+2. Always include `Content-Type: application/json` header
+3. Check HTTP status codes:
+   - 200: Success
+   - 400: Bad Request (invalid input)
+   - 401: Unauthorized
+   - 500: Server Error
+
+### Error Handling Best Practices
+
+1. Always check the `success` boolean in responses
+2. Error responses include an `error` field with a message
+3. Token errors return 401 status code
+4. Validation errors return 400 status code
+
+Need help? Open an issue in the repository with the actual server response if it doesn't match the documentation.
+
+CI/CD (GitHub Actions):
+
+- The workflow `.github/workflows/ci-cd.yml` runs on push to `main`. It builds the Docker image, pushes it to Container Registry and deploys to Cloud Run. Ensure the GitHub secrets above are configured before enabling the workflow.
+
+Security notes:
+- Do not commit service account keys or any secret files to the repo.
+- Use GitHub Secrets for CI authentication.
+
